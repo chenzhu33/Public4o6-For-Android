@@ -1,0 +1,1 @@
+cmd_/home/carelife/android_icecream/myTunnel/public4over6.ko := arm-eabi-ld -r  -T /home/carelife/android_icecream/android_kernel/CyanogenMod/scripts/module-common.lds --build-id  -o /home/carelife/android_icecream/myTunnel/public4over6.ko /home/carelife/android_icecream/myTunnel/public4over6.o /home/carelife/android_icecream/myTunnel/public4over6.mod.o
