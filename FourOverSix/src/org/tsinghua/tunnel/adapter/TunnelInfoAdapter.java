@@ -3,6 +3,7 @@ package org.tsinghua.tunnel.adapter;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import org.tsinghua.ti.R;
  * @author carelife
  */
 public class TunnelInfoAdapter extends BaseAdapter {
+	private final static String TAG = "Public4o6";
+
 	private volatile static TunnelInfoAdapter instance = null;
 
 	private LayoutInflater layoutInflater;
@@ -29,7 +32,14 @@ public class TunnelInfoAdapter extends BaseAdapter {
 		if (instance == null) {
 			synchronized (TunnelInfoAdapter.class) {
 				if (instance == null) {
+					Log.d(TAG, "tunnelInfo instance is null...");
 					instance = new TunnelInfoAdapter(ctx);
+					instance.addTunnelInfo("Public Ipv4 Address:", "NULL");
+					instance.addTunnelInfo("Public Ipv6 Address:", "NULL");
+					instance.addTunnelInfo("Incoming Traffic:", "0.0K");
+					instance.addTunnelInfo("Outcoming Traffic:", "0.0K");
+					instance.addTunnelInfo("Tunnel Status:", "CLOSE");
+					instance.notifyDataSetChanged();
 				}
 			}
 		}

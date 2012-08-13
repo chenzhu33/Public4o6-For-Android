@@ -11,6 +11,11 @@ import java.util.Enumeration;
 import org.tsinghua.ti.R;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +38,8 @@ import org.tsinghua.tunnel.jni.*;
 
 public class FourOverSixActivity extends Activity implements
 		OnViewChangeListener, OnClickListener {
+
+	private final static String TAG = "Public4o6";
 
 	private SettingsAdapter stAdapter;
 
@@ -66,9 +73,26 @@ public class FourOverSixActivity extends Activity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		Log.d(TAG,"balabalbalabal");
 		init();
 		initFile();
 		initGui();
+	}
+
+	private void init() {
+		mScrollLayout = (MyScrollLayout) findViewById(R.id.ScrollLayout);
+		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.llayout);
+		mViewCount = mScrollLayout.getChildCount();
+		mImageViews = new ImageView[mViewCount];
+		for (int i = 0; i < mViewCount; i++) {
+			mImageViews[i] = (ImageView) linearLayout.getChildAt(i);
+			mImageViews[i].setEnabled(true);
+			mImageViews[i].setOnClickListener(this);
+			mImageViews[i].setTag(i);
+		}
+		mCurSel = 0;
+		mImageViews[mCurSel].setEnabled(false);
+		mScrollLayout.SetOnViewChangeListener(this);
 	}
 
 	private void initFile() {
@@ -90,12 +114,6 @@ public class FourOverSixActivity extends Activity implements
 		stAdapter = new SettingsAdapter(this, initSettingInfo);
 
 		tnAdapter = TunnelInfoAdapter.getInstance(this);
-		tnAdapter.addTunnelInfo("Public Ipv4 Address:", "NULL");
-		tnAdapter.addTunnelInfo("Public Ipv6 Address:", "NULL");
-		tnAdapter.addTunnelInfo("Incoming Traffic:", "0.0K");
-		tnAdapter.addTunnelInfo("Outcoming Traffic:", "0.0K");
-		tnAdapter.addTunnelInfo("Tunnel Status:", "CLOSE");
-		tnAdapter.notifyDataSetChanged();
 
 		logAdapter = LogsAdapter.getInstance(this);
 
@@ -152,8 +170,69 @@ public class FourOverSixActivity extends Activity implements
 		});
 	}
 
+	private void showNotification() {
+		NotificationManager notificationManager = (NotificationManager) this
+				.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
+
+		Notification notification = new Notification(R.drawable.ic_launcher,
+				TAG, System.currentTimeMillis());
+		notification.flags |= Notification.FLAG_ONGOING_EVENT;
+		notification.flags |= Notification.FLAG_NO_CLEAR;
+		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+		notification.defaults = Notification.DEFAULT_LIGHTS;
+		notification.ledARGB = Color.BLUE;
+		notification.ledOnMS = 5000;
+
+		CharSequence contentTitle = "Public4o6 is running...";
+		CharSequence contentText = "Traffic In: 0.0KBytes\nTraffic Out: 0.0KBytes";
+		
+		Intent notificationIntent = new Intent(this, FourOverSixActivity.class);
+		PendingIntent contentItent = PendingIntent.getActivity(this, 0,
+				notificationIntent, 0);
+		notification.setLatestEventInfo(this, contentTitle, contentText,
+				contentItent);
+
+		notificationManager.notify(0, notification);
+	}
+
+	@Override
+	public void onStop() {
+		Log.d(TAG,"OnStop...");
+		showNotification();
+		super.onStop();
+	}
+
+//	@Override
+//	public void onResume() {
+//		Log.d(TAG,"OnResume...");
+//		super.onResume();
+//	}
+//	
+//	@Override
+//	public void onDestroy() {
+//		Log.d(TAG,"OnDestroy...");
+//		super.onDestroy();
+//	}
+//	
+//	@Override
+//	public void onStart() {
+//		Log.d(TAG,"OnStart...");
+//		super.onStart();
+//	}
+//	
+//	@Override
+//	public void onRestart() {
+//		Log.d(TAG,"OnRestart...");
+//		super.onRestart();
+//	}
+
+	private void doExit() {
+		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		nm.cancel(R.string.app_name);
+	}
+
 	@SuppressWarnings("rawtypes")
-	public String getLocalIP() {
+	private String getLocalIP() {
 		String ipv6Address = null;
 		try {
 			Enumeration e1 = (Enumeration) NetworkInterface
@@ -179,22 +258,6 @@ public class FourOverSixActivity extends Activity implements
 		if (ipv6Address != null)
 			return ipv6Address.substring(0, ipv6Address.indexOf("%"));
 		return null;
-	}
-
-	private void init() {
-		mScrollLayout = (MyScrollLayout) findViewById(R.id.ScrollLayout);
-		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.llayout);
-		mViewCount = mScrollLayout.getChildCount();
-		mImageViews = new ImageView[mViewCount];
-		for (int i = 0; i < mViewCount; i++) {
-			mImageViews[i] = (ImageView) linearLayout.getChildAt(i);
-			mImageViews[i].setEnabled(true);
-			mImageViews[i].setOnClickListener(this);
-			mImageViews[i].setTag(i);
-		}
-		mCurSel = 0;
-		mImageViews[mCurSel].setEnabled(false);
-		mScrollLayout.SetOnViewChangeListener(this);
 	}
 
 	private void setCurPoint(int index) {
