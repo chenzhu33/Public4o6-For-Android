@@ -15,6 +15,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,6 +35,7 @@ import org.tsinghua.tunnel.adapter.SettingsAdapter;
 import org.tsinghua.tunnel.adapter.TunnelInfoAdapter;
 import org.tsinghua.tunnel.component.MyScrollLayout;
 import org.tsinghua.tunnel.component.OnViewChangeListener;
+import org.tsinghua.tunnel.database.DBAdapter;
 import org.tsinghua.tunnel.jni.*;
 
 public class FourOverSixActivity extends Activity implements
@@ -64,16 +66,21 @@ public class FourOverSixActivity extends Activity implements
 	private Spinner dhcpV4AddressChooser;
 
 	private MyScrollLayout mScrollLayout;
+
 	private ImageView[] mImageViews;
+
 	private int mViewCount;
+
 	private int mCurSel;
+
+	private DBAdapter db;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		Log.d(TAG,"balabalbalabal");
+		Log.d(TAG, "onCreate");
 		init();
 		initFile();
 		initGui();
@@ -149,6 +156,8 @@ public class FourOverSixActivity extends Activity implements
 
 				Toast.makeText(FourOverSixActivity.this, "Connection Success",
 						Toast.LENGTH_SHORT).show();
+				conButton.setClickable(false);
+				disconButton.setClickable(true);
 			}
 		});
 		disconButton.setOnClickListener(new OnClickListener() {
@@ -166,8 +175,29 @@ public class FourOverSixActivity extends Activity implements
 					Toast.makeText(FourOverSixActivity.this,
 							"DisConnection Success", Toast.LENGTH_SHORT).show();
 				}
+				conButton.setClickable(true);
+				disconButton.setClickable(false);
 			}
 		});
+
+		db = new DBAdapter(this);
+		Cursor cur = db.open().loadStatus();
+		if (cur.getCount() > 0) {
+			tnAdapter.updateTunnelInfo(0, cur.getString(1));
+			tnAdapter.updateTunnelInfo(1, cur.getString(2));
+			tnAdapter.updateTunnelInfo(2, cur.getString(3));
+			tnAdapter.updateTunnelInfo(3, cur.getString(4));
+			if (cur.getInt(0) == 1) {
+				tnAdapter.updateTunnelInfo(4, "OPEN");
+				conButton.setClickable(false);
+				disconButton.setClickable(true);
+			} else {
+				conButton.setClickable(true);
+				disconButton.setClickable(false);
+			}
+		}
+		cur.close();
+		db.close();
 	}
 
 	private void showNotification() {
@@ -185,7 +215,7 @@ public class FourOverSixActivity extends Activity implements
 
 		CharSequence contentTitle = "Public4o6 is running...";
 		CharSequence contentText = "Traffic In: 0.0KBytes\nTraffic Out: 0.0KBytes";
-		
+
 		Intent notificationIntent = new Intent(this, FourOverSixActivity.class);
 		PendingIntent contentItent = PendingIntent.getActivity(this, 0,
 				notificationIntent, 0);
@@ -197,34 +227,41 @@ public class FourOverSixActivity extends Activity implements
 
 	@Override
 	public void onStop() {
-		Log.d(TAG,"OnStop...");
+		Log.d(TAG, "OnStop...");
 		showNotification();
+		int status = 0;
+		if (tnAdapter.getItem(4).equals("OPEN"))
+			status = 1;
+		db.open().saveStatus(status, tnAdapter.getItem(0),
+				tnAdapter.getItem(1), tnAdapter.getItem(2),
+				tnAdapter.getItem(3));
+		db.close();
 		super.onStop();
 	}
 
-//	@Override
-//	public void onResume() {
-//		Log.d(TAG,"OnResume...");
-//		super.onResume();
-//	}
-//	
-//	@Override
-//	public void onDestroy() {
-//		Log.d(TAG,"OnDestroy...");
-//		super.onDestroy();
-//	}
-//	
-//	@Override
-//	public void onStart() {
-//		Log.d(TAG,"OnStart...");
-//		super.onStart();
-//	}
-//	
-//	@Override
-//	public void onRestart() {
-//		Log.d(TAG,"OnRestart...");
-//		super.onRestart();
-//	}
+	// @Override
+	// public void onResume() {
+	// Log.d(TAG,"OnResume...");
+	// super.onResume();
+	// }
+	//
+	// @Override
+	// public void onDestroy() {
+	// Log.d(TAG,"OnDestroy...");
+	// super.onDestroy();
+	// }
+	//
+	// @Override
+	// public void onStart() {
+	// Log.d(TAG,"OnStart...");
+	// super.onStart();
+	// }
+	//
+	// @Override
+	// public void onRestart() {
+	// Log.d(TAG,"OnRestart...");
+	// super.onRestart();
+	// }
 
 	private void doExit() {
 		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

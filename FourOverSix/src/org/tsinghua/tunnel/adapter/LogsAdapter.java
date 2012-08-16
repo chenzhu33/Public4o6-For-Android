@@ -68,6 +68,8 @@ public class LogsAdapter extends BaseAdapter {
 					logsList.add(log);
 				} while (cur.moveToNext());
 			}
+			cur.close();
+			db.close();
 		}
 		layoutInflater = LayoutInflater.from(ctx);
 	}
@@ -79,7 +81,9 @@ public class LogsAdapter extends BaseAdapter {
 		Log log = new Log(type, date, content);
 		logsList.add(log);
 		this.notifyDataSetChanged();
+		db.open();
 		db.insertALog(type, date, content);
+		db.close();
 	}
 
 	public int getCount() {

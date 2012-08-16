@@ -45,6 +45,7 @@ public class DBAdapter {
 		}
 
 		public void onCreate(SQLiteDatabase db) {
+			Log.d("AAA","db create");
 			db.execSQL(DATABASE_CREATE1);
 			db.execSQL(DATABASE_CREATE2);
 		}
@@ -103,7 +104,7 @@ public class DBAdapter {
 		return db.insert(DATABASE_TABLE2, null, initialValues);
 	}
 
-	public Cursor getStatus() {
+	public Cursor loadStatus() {
 		Cursor mCursor = db.query(DATABASE_TABLE2, new String[] { KEY2_STATUS, KEY2_VFADDR,
 				KEY2_VSADDR, KEY2_TRAFFICIN, KEY2_TRAFFICOUT }, null, null, null, null, null);
 		if (mCursor != null) {

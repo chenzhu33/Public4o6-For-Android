@@ -88,7 +88,7 @@ public class TunnelInfoAdapter extends BaseAdapter {
 		return tunnelInfoListContent.size();
 	}
 
-	public Object getItem(int position) {
+	public String getItem(int position) {
 		return tunnelInfoListContent.get(position);
 	}
 
