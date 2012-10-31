@@ -22,8 +22,6 @@ public class TunnelInfoAdapter extends BaseAdapter {
 
 	private LayoutInflater layoutInflater;
 
-	private Context ctx;
-
 	private ArrayList<String> tunnelInfoListName;
 
 	private ArrayList<String> tunnelInfoListContent;
@@ -36,6 +34,7 @@ public class TunnelInfoAdapter extends BaseAdapter {
 					instance = new TunnelInfoAdapter(ctx);
 					instance.addTunnelInfo("Public Ipv4 Address:", "NULL");
 					instance.addTunnelInfo("Public Ipv6 Address:", "NULL");
+					instance.addTunnelInfo("Post set", "NULL");
 					instance.addTunnelInfo("Incoming Traffic:", "0.0K");
 					instance.addTunnelInfo("Outcoming Traffic:", "0.0K");
 					instance.addTunnelInfo("Tunnel Status:", "CLOSE");
@@ -46,28 +45,14 @@ public class TunnelInfoAdapter extends BaseAdapter {
 		return instance;
 	}
 
-	// public static TunnelInfoAdapter getInstance(Context ctx,
-	// ArrayList<String> nameList, ArrayList<String> contentList) {
-	// if (instance == null) {
-	// synchronized (TunnelInfoAdapter.class) {
-	// if (instance == null) {
-	// instance = new TunnelInfoAdapter(ctx, nameList, contentList);
-	// }
-	// }
-	// }
-	// return instance;
-	// }
-
 	private TunnelInfoAdapter(Context ctx, ArrayList<String> nameList,
 			ArrayList<String> contentList) {
-		this.ctx = ctx;
 		tunnelInfoListName = nameList;
 		tunnelInfoListContent = contentList;
 		layoutInflater = LayoutInflater.from(ctx);
 	}
 
 	private TunnelInfoAdapter(Context ctx) {
-		this.ctx = ctx;
 		tunnelInfoListName = new ArrayList<String>();
 		tunnelInfoListContent = new ArrayList<String>();
 		layoutInflater = LayoutInflater.from(ctx);

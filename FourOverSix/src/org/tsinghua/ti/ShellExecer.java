@@ -1,6 +1,7 @@
 package org.tsinghua.ti;
 
 import java.io.*;
+import java.util.ArrayList;
 
 import android.content.Context;
 import android.util.Log;
@@ -19,16 +20,8 @@ public class ShellExecer {
 
 	private static String FILEPATH = "/data/data/org.tsinghua.ti/module/";
 
-	private static String load1 = "ifconfig public4over6 up";
-
-	private static String load2 = "ip addr add 58.205.200.18/24 broadcast 58.205.200.255 dev public4over6";
-
-	private static String load3 = "ip route del default dev wlan0";
-
-	private static String load4 = "ip route add default dev public4over6 metric 10";
-
-	private static String load5 = "ip route add default dev wlan0 metric 100";
-
+	private static ArrayList<String> loadCmd = new ArrayList<String>();
+	
 	private static void copyFile(String filename) throws IOException {
 		String fileNames = FILEPATH + filename;
 		File dir = new File(FILEPATH);
@@ -71,26 +64,30 @@ public class ShellExecer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		loadCmd.add("ifconfig public4over6 up");
+		loadCmd.add("ip addr add 58.205.200.18/24 broadcast 58.205.200.255 dev public4over6");
+		loadCmd.add("ip route del default dev wlan0");
+		loadCmd.add("ip route add default dev public4over6 metric 10");
+		loadCmd.add("ip route add default dev wlan0 metric 100");
+
 	}
 
 	public static void execCommand(int command) throws IOException {
-		String cmd;
+		String load0;
 		switch (command) {
 		case 0:// insmod
-			cmd = insmodShellName + " " + FILEPATH + kmFileName;
-			runRootCommand(cmd);
-			runRootCommand(load1);
-			runRootCommand(load2);
-			runRootCommand(load3);
-			runRootCommand(load4);
-			runRootCommand(load5);
+			load0 = insmodShellName + " " + FILEPATH + kmFileName;
+			runRootCommand(load0);
+			for(String cmd : loadCmd) {
+				runRootCommand(cmd);
+			}
 			break;
 		case 1:// rmmod
-			cmd = rmmodShellName + " " + kmName;
-			runRootCommand(cmd);
+			load0 = rmmodShellName + " " + kmName;
+			runRootCommand(load0);
 			break;
 		default:
-			cmd = "";
+			load0 = "";
 			break;
 		}
 	}

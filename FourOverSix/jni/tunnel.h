@@ -16,6 +16,8 @@
 struct TunnelInfo {
     struct in_addr v4_addr;
     struct in6_addr v6_addr;
+	unsigned short sport;
+	unsigned short eport;
     unsigned int in_traffic; //byte
     unsigned int out_traffic; //byte
 };

@@ -63,8 +63,6 @@ public class FourOverSixActivity extends Activity implements
 
 	private NativeMethods nativeMethods;
 
-	private Spinner dhcpV4AddressChooser;
-
 	private MyScrollLayout mScrollLayout;
 
 	private ImageView[] mImageViews;
@@ -108,15 +106,10 @@ public class FourOverSixActivity extends Activity implements
 
 	private void initGui() {
 		ArrayList<String> initSettingInfo = new ArrayList<String>();
-		ArrayList<String> dhcpV4AddressList = new ArrayList<String>();
 
 		initSettingInfo.add("Show tunnel status");
 		initSettingInfo.add("Auto startUp");
 		initSettingInfo.add("Record logs");
-
-		dhcpV4AddressList.add("58.205.200.10");
-		dhcpV4AddressList.add("58.205.200.18");
-		dhcpV4AddressList.add("58.205.200.32");
 
 		stAdapter = new SettingsAdapter(this, initSettingInfo);
 
@@ -133,11 +126,6 @@ public class FourOverSixActivity extends Activity implements
 
 		tcV6Address = (EditText) findViewById(R.id.tc_ipv6_addr);
 		tcV6Address.setText("2001:0da8:020d:0027:7a2b:cbff:fe1b:6ce0");
-		dhcpV4AddressChooser = (Spinner) findViewById(R.id.dhcp_ipv4_addr);
-		ArrayAdapter<String> dhcpAdapter = new ArrayAdapter<String>(
-				FourOverSixActivity.this, android.R.layout.simple_spinner_item,
-				dhcpV4AddressList);
-		dhcpV4AddressChooser.setAdapter(dhcpAdapter);
 
 		conButton = (Button) findViewById(R.id.connect);
 		disconButton = (Button) findViewById(R.id.disconnect);

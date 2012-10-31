@@ -91,9 +91,11 @@ int get_tunnel_info(char* show_string) {
     char v6_addr_string[129];
     inet_ntop(AF_INET6, &(u_tunnel.tunnel_info.v6_addr), v6_addr_string, 128);
 
-    snprintf(show_string, 512, "%s#%s#%d#%d", 
+    snprintf(show_string, 512, "%s#%s#%d-%d#%d#%d", 
             inet_ntoa(u_tunnel.tunnel_info.v4_addr),
             v6_addr_string,
+			u_tunnel.tunnel_info.sport,
+			u_tunnel.tunnel_info.eport,
             u_tunnel.tunnel_info.in_traffic,
             u_tunnel.tunnel_info.out_traffic);
 
